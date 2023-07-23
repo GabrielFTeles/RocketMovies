@@ -22,6 +22,22 @@ class NotesController {
 
     return response.status(201).json();
   }
+
+  async show(request, response) {
+    const { note_id } = request.params;
+
+    const [note] = await knex('notes').where({ id: note_id });
+    
+    const tags = await knex('tags').where({ note_id });
+    const tagsNames = tags.map(tag => tag.name);
+
+    return response.json({
+      ...note,
+      tags: tagsNames,
+    });
+  }
+
+  
 }
 
 module.exports = NotesController;
