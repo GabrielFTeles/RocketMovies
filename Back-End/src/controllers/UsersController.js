@@ -40,7 +40,6 @@ class UsersController {
       throw new AppError('This e-mail is already in use.')
     }
 
-
     if (password && !old_password) {
       throw new AppError('Need to inform the old password to update the user.');
     }
