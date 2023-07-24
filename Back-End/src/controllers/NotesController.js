@@ -23,12 +23,34 @@ class NotesController {
     return response.status(201).json();
   }
 
-  async show(request, response) {
-    const { note_id } = request.params;
+  async index(request, response) {
+    const { user_id, title, tags } = request.query;
 
-    const [note] = await knex('notes').where({ id: note_id });
+    const notes = await knex('notes')
+      .whereLike('title', `%${title}%`)
+      .orderBy('title');
+
+    const userTags = await knex('tags').where({ user_id });
+
+    const notesWithTags = notes.map(note => {
+      const noteTags = userTags.filter(tag => tag.note_id === note.id)
+       .map(tag => tag.name);
+        
+      return {
+        ...note,
+        tags: noteTags
+      }
+    });
+
+    return response.json(notesWithTags);
+  }
+
+  async show(request, response) {
+    const { id } = request.params;
+
+    const [note] = await knex('notes').where({ id });
     
-    const tags = await knex('tags').where({ note_id });
+    const tags = await knex('tags').where({ note_id: id });
     const tagsNames = tags.map(tag => tag.name);
 
     return response.json({
@@ -45,7 +67,7 @@ class NotesController {
     return response.json();
   }
 
-
+  
 }
 
 module.exports = NotesController;
