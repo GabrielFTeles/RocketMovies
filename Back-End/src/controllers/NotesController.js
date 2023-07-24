@@ -24,7 +24,7 @@ class NotesController {
   }
 
   async index(request, response) {
-    const { user_id, title, tags } = request.query;
+    const { user_id, title } = request.query;
 
     const notes = await knex('notes')
       .whereLike('title', `%${title}%`)
@@ -66,8 +66,6 @@ class NotesController {
 
     return response.json();
   }
-
-  
 }
 
 module.exports = NotesController;
