@@ -2,9 +2,14 @@ const knex = require('../database/knex');
 const AppError = require('../utils/AppError');
 const { hash, compare } = require('bcryptjs');
 
+const regexEmail = new RegExp('^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$');
 class UsersController {
   async create(request, response) {
     const { name, email, password } = request.body;
+
+    if (!regexEmail.test(email)) {
+      throw new AppError('Please enter a valid email.');
+    }
 
     const emailAlreadyExists = await knex('users')
       .where({ email }).first();
@@ -32,6 +37,10 @@ class UsersController {
 
     if (!user) {
       throw new AppError('User does not exist.');
+    }
+
+    if (!regexEmail.test(email)) {
+      throw new AppError('Please enter a valid email.');
     }
 
     const ownerOfEmail = await knex('users').where({ email }).first();
