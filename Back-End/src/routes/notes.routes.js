@@ -11,7 +11,7 @@ notesRoutes.use(ensureAuthenticated);
 
 notesRoutes.get('/', notesController.index);
 notesRoutes.get('/:id', notesController.show);
-notesRoutes.post('/:user_id', notesController.create);
+notesRoutes.post('/', notesController.create);
 notesRoutes.delete('/:note_id', notesController.delete);
 
 module.exports = notesRoutes;

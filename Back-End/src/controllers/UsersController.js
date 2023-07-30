@@ -5,7 +5,9 @@ const { hash, compare } = require('bcryptjs');
 const regexEmail = new RegExp('^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$');
 class UsersController {
   async create(request, response) {
-    const { name, email, password } = request.body;
+    let { name, email, password } = request.body;
+
+    email = email.toLowerCase();
 
     if (!regexEmail.test(email)) {
       throw new AppError('Please enter a valid email.');
@@ -31,7 +33,7 @@ class UsersController {
 
   async update(request, response) {
     const { name, email, password, old_password } = request.body;
-    const { user_id } = request.params;
+    const user_id = request.user.id;
 
     const user = await knex('users').where({ id: user_id }).first();
 

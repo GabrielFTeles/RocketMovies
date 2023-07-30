@@ -7,7 +7,9 @@ const { compare } = require('bcryptjs');
 
 class SessionsRoutes {
   async create(request, response) {
-    const { email, password } = request.body;
+    let { email, password } = request.body;
+
+    email = email.toLowerCase();
 
     const user = await knex('users').where({ email }).first();
 
