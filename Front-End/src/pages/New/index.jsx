@@ -47,7 +47,7 @@ export function New() {
     api.post('/notes', {
       title,
       description,
-      rating,
+      rating: Math.round(rating),
       tags
     });
 
@@ -57,6 +57,8 @@ export function New() {
   }
 
   function handleNewTag() {
+    if (newTag === "") return;
+    
     setTags(prevState => [...prevState, newTag]);
     setNewTag("");
   }

@@ -21,6 +21,7 @@ export const Container = styled.li`
     h2 {
       font-size: 2.4rem;
       margin-bottom: 0.8rem;
+      word-break: break-all;
     }
 
     div:nth-of-type(1) {
