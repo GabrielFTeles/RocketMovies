@@ -24,6 +24,7 @@ export function SignIn() {
   const { signIn } = useAuth();
 
   function handleSignIn() {
+    if (!email || !password) return toast.error("Please provide email and password.");
     debounceSignIn();
   }
 
