@@ -1,33 +1,19 @@
 const knex = require('../database/knex');
 const AppError = require('../utils/AppError');
 const { hash, compare } = require('bcryptjs');
+const UsersRepository = require('../repositories/UsersRepository');
+const UserCreateService = require('../services/UserCreateService');
 
 const regexEmail = new RegExp('^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$');
 class UsersController {
   async create(request, response) {
     let { name, email, password } = request.body;
 
-    email = email.toLowerCase();
+    const usersRepository = new UsersRepository();
+    const userCreateService = new UserCreateService(usersRepository);
 
-    if (!regexEmail.test(email)) {
-      throw new AppError('Please enter a valid email.');
-    }
-
-    const emailAlreadyExists = await knex('users')
-      .where({ email }).first();
-
-    if (emailAlreadyExists) {
-      throw new AppError('E-mail already in use.');
-    }
-
-    const hashedPassword = await hash(password, 8);
-
-    await knex('users').insert({
-      name, 
-      email, 
-      password: hashedPassword,
-    });
-
+    await userCreateService.execute({ name, email, password });
+    
     return response.status(201).json();
   }
 
