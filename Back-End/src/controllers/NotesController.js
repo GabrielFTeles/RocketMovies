@@ -1,24 +1,18 @@
 const knex = require('../database/knex');
+const NotesCreateService = require('../services/NotesCreateService');
+const NotesIndexService = require('../services/NotesIndexService');
+const NotesShowService = require('../services/NotesShowService');
+const NotesRepository = require('../repositories/NotesRepository');
 
 class NotesController {
   async create(request, response) {
     const { title, description, rating, tags } = request.body;
     const user_id = request.user.id;
 
-    const [note_id] = await knex('notes').insert({
-      title,
-      description,
-      rating,
-      user_id,
-    });
+    const notesRepository = new NotesRepository();
+    const notesCreateService = new NotesCreateService(notesRepository);
 
-    const tagsToInsert = tags.map(tag => ({
-      note_id,
-      user_id,
-      name: tag
-    }));
-
-    await knex('tags').insert(tagsToInsert);
+    notesCreateService.execute({ title, description, rating, tags }, user_id);
 
     return response.status(201).json();
   }
@@ -27,46 +21,33 @@ class NotesController {
     const { title } = request.query;
     const user_id = request.user.id;
 
-    const notes = await knex('notes')
-      .where({ user_id })
-      .whereLike('title', `%${title}%`)
-      .orderBy('title');
+    const notesRepository = new NotesRepository();
+    const notesIndexService = new NotesIndexService(notesRepository);
 
-    const userTags = await knex('tags').where({ user_id });
-
-    const notesWithTags = notes.map(note => {
-      const noteTags = userTags.filter(tag => tag.note_id === note.id)
-       .map(tag => tag.name);
-        
-      return {
-        ...note,
-        tags: noteTags
-      }
-    });
+    const notesWithTags = await notesIndexService.execute(title, user_id);
 
     return response.json(notesWithTags);
   }
 
   async show(request, response) {
     const { id } = request.params;
+    const user_id = request.user.id;
 
-    const [note] = await knex('notes').where({ id });
-    const [user] = await knex('users').where({ id: note.user_id }).select('name', 'avatar');
-    
-    const tags = await knex('tags').where({ note_id: id });
-    const tagsNames = tags.map(tag => tag.name);
+    const notesRepository = new NotesRepository();
+    const notesShowService = new NotesShowService(notesRepository);
 
-    return response.json({
-      author: user,
-      ...note,
-      tags: tagsNames,
-    });
+    const noteDetails = await notesShowService.execute(id, user_id);
+
+    return response.json(noteDetails);
   }
 
   async delete(request, response) {
     const { note_id } = request.params;
+    const user_id = request.user.id;
 
-    await knex('notes').where({ id: note_id }).delete();
+    const notesRepository = new NotesRepository();
+
+    await notesRepository.delete(note_id, user_id)
 
     return response.json();
   }

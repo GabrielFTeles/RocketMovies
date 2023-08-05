@@ -104,8 +104,9 @@ export function New() {
 
               <div className="tags">
                 {
-                  tags.map(tag => (
+                  tags.map((tag, index) => (
                     <NoteItem 
+                      key={String(index)}
                       value={tag}
                       onClick={() => handleRemoveTag(tag)}
                     />
@@ -117,7 +118,7 @@ export function New() {
                   value={newTag}
                   onChange={e => setNewTag(e.target.value)}
                   onClick={handleNewTag}
-                  maxlength="10"
+                  maxLength="10"
                 />
               </div>
             </div>

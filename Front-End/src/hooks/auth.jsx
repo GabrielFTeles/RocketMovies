@@ -25,9 +25,9 @@ function AuthProvider({ children }) {
 
     } catch (error) {
       if (error.response) {
-        toast.error(error.response.data.message);
+        throw new Error(error.response.data.message);
       } else {
-        toast.error("Can't sign in, please try again.");
+        throw new Error("Can't sign in, please try again.");
       }
     }
   }
@@ -74,10 +74,7 @@ function AuthProvider({ children }) {
 
     if (token && user) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setData({
-        token,
-        user
-      });
+      setData({ token, user });
     }
   }, []);
 

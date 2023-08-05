@@ -33,6 +33,7 @@ export function SignIn() {
 
     signIn({ email, password })
       .then((user) => toast(`👋 Bem vindo ${user.name}!`))
+      .catch(error => toast.error(error.message))
       .finally(() => setLoading(false));
   }, 300);
 

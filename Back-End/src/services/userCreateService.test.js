@@ -6,7 +6,7 @@ describe("UserCreateService", () => {
   let usersRepositoryInMemory = null;
   let userCreateService = null;
 
-  BeforeEach(() => {
+  beforeEach(() => {
     usersRepositoryInMemory = new UsersRepositoryInMemory();
     userCreateService = new UserCreateService(usersRepositoryInMemory);
   });

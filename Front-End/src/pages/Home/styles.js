@@ -46,7 +46,7 @@ export const MoviesList = styled.ul`
   flex-direction: column;
   gap: 2.4rem;
 
-  max-height: 65rem;
+  max-height: 66rem;
 
   padding-right: 1rem;
   margin-top: 3.5rem;

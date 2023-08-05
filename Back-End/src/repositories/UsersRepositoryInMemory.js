@@ -1,8 +1,19 @@
 class UsersRepositoryInMemory {
-  users = [];
+  users = [
+    {
+      id: 1001,
+      name: "User Test",
+      email: "update@test.com",
+      password: "123"
+    }
+  ];
 
   async findByEmail(email) {
     return this.users.find(user => user.email === email);
+  }
+
+  async findById(id) {
+    return this.users.find(user => user.id === id);
   }
 
   async create({ name, email, password }) {
